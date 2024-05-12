@@ -16,7 +16,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<GetUserEvent>((event, emit) async {
       final result = await UserRemoteDatasource().fetchUser(page, limit);
       result.fold(
-        (l) => emit(UserError(l)),
+        (error) => emit(UserError(error)),
         (data) {
           debugPrint('Get User: ${data.length}');
           debugPrint('Page: $page');
@@ -24,7 +24,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           users.addAll(data);
           page++;
           debugPrint('Total Users: ${users.length}');
-          emit(UserLoaded(users));
+          emit(UserLoaded(users, hasMore));
         },
       );
     });

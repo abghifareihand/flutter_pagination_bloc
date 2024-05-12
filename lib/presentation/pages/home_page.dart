@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
     double maxScroll = _scrollController.position.maxScrollExtent;
     double currentScroll = _scrollController.position.pixels;
 
-    if (currentScroll == maxScroll && context.read<UserBloc>().hasMore) {
+    if (currentScroll == maxScroll) {
       debugPrint('Fetching new data...');
       context.read<UserBloc>().add(GetUserEvent());
     }
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
             return ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               controller: _scrollController,
-              itemCount: context.read<UserBloc>().hasMore
+              itemCount: state.hasMore
                   ? state.userResponse.length + 1
                   : state.userResponse.length,
               itemBuilder: (context, index) {
