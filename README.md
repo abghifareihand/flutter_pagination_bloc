@@ -1,4 +1,4 @@
 # Pagination with Bloc State Management
 
 ## Demo App
-https://github.com/user-attachments/assets/90eec6ad-0e45-40ef-933f-e1808d74e5b4
+https://github.com/user-attachments/assets/41440908-80ac-4e8c-9d31-f399ea477bfb
