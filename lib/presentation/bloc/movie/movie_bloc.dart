@@ -17,9 +17,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
         (data) {
           print('Get Movie: ${data.length}');
           print('Page: $page');
-          if (data.isEmpty) {
-            hasMore = false;
-          }
+          hasMore = data.isNotEmpty;
           movies.addAll(data);
           page++;
           print('Total Movies: ${movies.length}');
