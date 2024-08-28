@@ -3,12 +3,12 @@ import 'package:flutter_pagination_bloc/data/models/user_response_model.dart';
 
 class UserCard extends StatelessWidget {
   final UserResponseModel user;
-  const UserCard({super.key, required this.user});
+  final int id;
+  const UserCard({super.key, required this.user, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.all(
@@ -48,7 +48,7 @@ class UserCard extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              user.id,
+              (id + 1).toString(),
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16,

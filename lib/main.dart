@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: false,
         ),
-        home: const MovieInfinitePage(),
+        home: const HomePage(),
       ),
     );
   }

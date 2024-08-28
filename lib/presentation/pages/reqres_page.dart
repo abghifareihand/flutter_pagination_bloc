@@ -39,47 +39,59 @@ class _ReqresPageState extends State<ReqresPage> {
         backgroundColor: Colors.redAccent,
         title: const Text('Pagination Page'),
       ),
-      body: BlocBuilder<ReqresBloc, ReqresState>(
-        builder: (context, state) {
-          /// loaded state
-          if (state is ReqresLoaded) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              controller: _scrollController,
-              itemCount: state.hasMore ? state.reqres.length + 1 : state.reqres.length,
-              itemBuilder: (context, index) {
-                if (index < state.reqres.length) {
-                  final reqres = state.reqres[index];
-                  return ReqresCard(reqres: reqres);
-                } else {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Center(
-                      child: SpinKitFadingCircle(
-                        size: 30,
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                  );
-                }
-              },
+      body: BlocListener<ReqresBloc, ReqresState>(
+        listener: (context, state) {
+          if (state is ReqresLoaded && !state.hasMore) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No more data available'),
+                duration: Duration(seconds: 2),
+              ),
             );
           }
-
-          /// error state
-          if (state is ReqresError) {
-            return Center(
-              child: Text(state.message),
-            );
-          }
-
-          /// initial state
-          return const Center(
-            child: SpinKitFadingCircle(
-              color: Colors.blue,
-            ),
-          );
         },
+        child: BlocBuilder<ReqresBloc, ReqresState>(
+          builder: (context, state) {
+            /// loaded state
+            if (state is ReqresLoaded) {
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                controller: _scrollController,
+                itemCount: state.hasMore ? state.reqres.length + 1 : state.reqres.length,
+                itemBuilder: (context, index) {
+                  if (index < state.reqres.length) {
+                    final reqres = state.reqres[index];
+                    return ReqresCard(reqres: reqres);
+                  } else {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Center(
+                        child: SpinKitFadingCircle(
+                          size: 30,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }
+
+            /// error state
+            if (state is ReqresError) {
+              return Center(
+                child: Text(state.message),
+              );
+            }
+
+            /// initial state
+            return const Center(
+              child: SpinKitFadingCircle(
+                color: Colors.blue,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

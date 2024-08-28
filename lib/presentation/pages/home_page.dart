@@ -1,86 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pagination_bloc/data/models/user_response_model.dart';
 import 'package:flutter_pagination_bloc/presentation/widgets/user_card.dart';
+import 'package:flutter_pagination_bloc/presentation/widgets/user_card_shimmer.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_pagination_bloc/presentation/bloc/user/user_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final ScrollController _scrollController = ScrollController();
-
-  void onScroll() {
-    double maxScroll = _scrollController.position.maxScrollExtent;
-    double currentScroll = _scrollController.position.pixels;
-
-    if (currentScroll == maxScroll) {
-      debugPrint('Fetching new data...');
-      context.read<UserBloc>().add(GetUserEvent());
-    }
-  }
-
-  @override
-  void initState() {
-    context.read<UserBloc>().add(GetUserEvent());
-    super.initState();
-    _scrollController.addListener(onScroll);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.redAccent,
-        title: const Text('Pagination Page'),
+        backgroundColor: Colors.blue,
+        title: const Text('Pagination Infinite Page'),
       ),
-      body: BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) {
-          /// loaded state
-          if (state is UserLoaded) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              controller: _scrollController,
-              itemCount: state.hasMore
-                  ? state.userResponse.length + 1
-                  : state.userResponse.length,
-              itemBuilder: (context, index) {
-                if (index < state.userResponse.length) {
-                  final user = state.userResponse[index];
-                  return UserCard(user: user);
-                } else {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Center(
-                      child: SpinKitFadingCircle(
-                        size: 30,
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                  );
-                }
-              },
+      body: BlocListener<UserBloc, UserState>(
+        listener: (context, state) {
+          if (state is UserLoaded && !state.hasMore) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No more data available'),
+                duration: Duration(seconds: 2),
+              ),
             );
           }
-
-          /// error state
-          if (state is UserError) {
-            return Center(
-              child: Text(state.message),
-            );
-          }
-
-          /// initial state
-          return const Center(
-            child: SpinKitFadingCircle(
-              color: Colors.blue,
-            ),
-          );
         },
+        child: BlocBuilder<UserBloc, UserState>(
+          bloc: context.read<UserBloc>()..add(GetUserEvent(page: 1)),
+          builder: (context, state) {
+            if (state is UserInitial) {
+              return const Center(
+                child: SpinKitFadingCircle(color: Colors.redAccent),
+              );
+            }
+
+            if (state is UserError) {
+              return Center(
+                child: Text(state.message),
+              );
+            }
+
+            if (state is UserLoaded) {
+              final pagingController = context.read<UserBloc>().pagingController;
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<UserBloc>().add(GetUserEvent(page: 1));
+                },
+                child: PagedListView.separated(
+                  padding: const EdgeInsets.all(16.0),
+                  pagingController: pagingController,
+                  separatorBuilder: (context, index) => const SizedBox(height: 16),
+                  builderDelegate: PagedChildBuilderDelegate<UserResponseModel>(
+                    itemBuilder: (context, user, index) => UserCard(
+                      user: user,
+                      id: index,
+                    ),
+                    firstPageProgressIndicatorBuilder: (_) => const UserCardShimmer(),
+                    newPageProgressIndicatorBuilder: (_) => const UserCardShimmer(),
+                  ),
+                ),
+              );
+            }
+
+            return const Center(
+              child: SpinKitFadingCircle(color: Colors.blue),
+            );
+          },
+        ),
       ),
     );
   }

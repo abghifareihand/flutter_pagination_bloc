@@ -18,9 +18,7 @@ class ReqresBloc extends Bloc<ReqresEvent, ReqresState> {
         (data) {
           print('Get User: ${data.length}');
           print('Page: $page');
-          if (data.isEmpty) {
-            hasMore = false;
-          }
+          hasMore = data.isNotEmpty;
           reqres.addAll(data);
           page++;
           print('Total Users: ${reqres.length}');
