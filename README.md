@@ -7,6 +7,8 @@
 
 https://github.com/user-attachments/assets/41440908-80ac-4e8c-9d31-f399ea477bfb
 
+https://github.com/user-attachments/assets/96756f1f-a122-4e12-b7e4-b5835851a8da
+
 ## :hammer_and_wrench: Built With
 - flutter_bloc
 - dartz
