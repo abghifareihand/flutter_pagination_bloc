@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pagination_bloc/presentation/bloc/movie/movie_bloc.dart';
+import 'package:flutter_pagination_bloc/presentation/bloc/reqres/reqres_bloc.dart';
 import 'package:flutter_pagination_bloc/presentation/pages/home_page.dart';
+import 'package:flutter_pagination_bloc/presentation/pages/movie_page.dart';
+import 'package:flutter_pagination_bloc/presentation/pages/reqres_page.dart';
 
 import 'presentation/bloc/user/user_bloc.dart';
 
@@ -18,14 +22,19 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => UserBloc(),
         ),
-       
+        BlocProvider(
+          create: (context) => ReqresBloc(),
+        ),
+        BlocProvider(
+          create: (context) => MovieBloc(),
+        ),
       ],
       child: MaterialApp(
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: false,
         ),
-        home: const HomePage(),
+        home: const MoviePage(),
       ),
     );
   }

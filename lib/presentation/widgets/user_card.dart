@@ -27,14 +27,6 @@ class UserCard extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            ClipOval(
-              child: Image.network(
-                user.avatar,
-                width: 45,
-                height: 45,
-              ),
-            ),
-            const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
